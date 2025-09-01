@@ -105,32 +105,38 @@ public class FireExtinguisherInteraction : MonoBehaviour
         }
     }
 
-
+	// 오른손을 왼손의 자식으로 설정하고 움직임을 잠그는 함수
     private void SetRightHandAsChildOfLeftHand()
     {
         if (leftHandTransform != null && rightHandTransform != null)
         {
+            // 오른손을 왼손의 자식으로 설정
             rightHandTransform.SetParent(leftHandTransform);
         }
     }
 
+    // 오른손의 움직임을 잠그는 함수
     private void LockRightHandMovement()
     {
         if (rightHandTransform != null)
         {
+
+            // 오른손의 위치와 회전을 원하는 값으로 설정
             rightHandTransform.localPosition = new Vector3(0.200000003f, -0.0700000003f, -0.0299999993f);
             rightHandTransform.localRotation = Quaternion.Euler(346.300018f, 358.279999f, 334.600006f);
 
+            // 오른손 모델 오브젝트 비활성화
             GameObject parentObject = GameObject.Find("RightHand");
             if (parentObject != null)
             {
+                // 부모 오브젝트의 자식 중 이름을 가진 오브젝트 찾기
                 Transform hand = parentObject.transform.Find("Right Hand Model");
                 if (hand != null)
                 {
-                    hand.gameObject.SetActive(false);
+                    hand.gameObject.SetActive(false); // 자식 오브젝트 비활성화
                 }
             }
-                isRightHandLocked = true;
+            isRightHandLocked = true; // 오른손 움직임 잠금 플래그 설정
 
         }
     }
@@ -161,5 +167,6 @@ public class FireExtinguisherInteraction : MonoBehaviour
         }
     }
 }
+
 
 
