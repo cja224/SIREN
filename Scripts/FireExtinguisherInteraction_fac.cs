@@ -1,4 +1,4 @@
-//¿À¸¥¼Õ±îÁö °íÁ¤µÈ ÄÚµå
+//ì˜¤ë¥¸ì†ê¹Œì§€ ê³ ì •ëœ ì½”ë“œ
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,69 +6,55 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class FireExtinguisherInteraction_fac : MonoBehaviour
 {
-    public Animator leftHandAnimator;   // ¿Ş¼Õ ¾Ö´Ï¸ŞÀÌÅÍ
-    public Animator rightHandAnimator;  // ¿À¸¥¼Õ ¾Ö´Ï¸ŞÀÌÅÍ
-    public XRRayInteractor rayInteractor; // XR Ray Interactor¿¡ ´ëÇÑ ÂüÁ¶
-    public Transform parentObject;  // ºÎ¸ğ ¿ÀºêÁ§Æ®¸¦ ¹Ì¸® ÇÒ´ç (ÀÌ¸§ ÇÊ¿ä ¾øÀ½)
+    public Animator leftHandAnimator;   // ì™¼ì† ì• ë‹ˆë©”ì´í„°
+    public Animator rightHandAnimator;  // ì˜¤ë¥¸ì† ì• ë‹ˆë©”ì´í„°
+    public XRRayInteractor rayInteractor; // XR Ray Interactorì— ëŒ€í•œ ì°¸ì¡°
+    public Transform parentObject;  // ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ë¥¼ ë¯¸ë¦¬ í• ë‹¹ (ì´ë¦„ í•„ìš” ì—†ìŒ)
 
-    // ¿Ş¼Õ°ú ¿À¸¥¼Õ TransformÀ» ÂüÁ¶ÇÏµµ·Ï ¼öÁ¤
-    public Transform leftHandTransform;  // ¿Ş¼Õ Transform
-    public Transform rightHandTransform; // ¿À¸¥¼Õ Transform
+    // ì™¼ì†ê³¼ ì˜¤ë¥¸ì† Transformì„ ì°¸ì¡°í•˜ë„ë¡ ìˆ˜ì •
+    public Transform leftHandTransform;  // ì™¼ì† Transform
+    public Transform rightHandTransform; // ì˜¤ë¥¸ì† Transform
 
-    private GameObject fireObject; // ºñÈ°¼ºÈ­µÈ ÀÚ½Ä ¿ÀºêÁ§Æ®¸¦ Ã£±â À§ÇÑ º¯¼ö
+    private GameObject fireObject; // ë¹„í™œì„±í™”ëœ ìì‹ ì˜¤ë¸Œì íŠ¸ë¥¼ ì°¾ê¸° ìœ„í•œ ë³€ìˆ˜
 
-    // Ãß°¡µÈ º¯¼ö
-    private bool isRightHandLocked = false; // ¿À¸¥¼Õ ¿òÁ÷ÀÓÀ» Àá±×´Â ÇÃ·¡±×
+    // ì¶”ê°€ëœ ë³€ìˆ˜
+    private bool isRightHandLocked = false; // ì˜¤ë¥¸ì† ì›€ì§ì„ì„ ì ê·¸ëŠ” í”Œë˜ê·¸
 
     private void Start()
     {
-        // XRRayInteractor¿¡¼­ selectEntered ÀÌº¥Æ®¸¦ ±¸µ¶ÇÕ´Ï´Ù.
+        // XRRayInteractorì—ì„œ selectEntered ì´ë²¤íŠ¸ë¥¼ êµ¬ë…í•©ë‹ˆë‹¤.
         if (rayInteractor != null)
         {
             rayInteractor.selectEntered.AddListener(OnSelectEntered);
         }
 
-        // ºÎ¸ğ ¿ÀºêÁ§Æ®¸¦ ÅëÇØ ºñÈ°¼ºÈ­µÈ ÀÚ½Ä ¿ÀºêÁ§Æ® Ã£±â
+        // ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ë¥¼ í†µí•´ ë¹„í™œì„±í™”ëœ ìì‹ ì˜¤ë¸Œì íŠ¸ ì°¾ê¸°
         fireObject = FindInactiveChildByName(parentObject, "Fireextinguisher(fire)");
 
         if (fireObject == null)
         {
-            Debug.LogWarning("'Fireextinguisher(fire)' ¿ÀºêÁ§Æ®¸¦ ºÎ¸ğ·ÎºÎÅÍ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("'Fireextinguisher(fire)' ì˜¤ë¸Œì íŠ¸ë¥¼ ë¶€ëª¨ë¡œë¶€í„° ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
         else
         {
-            Debug.Log("'Fireextinguisher(fire)' ¿ÀºêÁ§Æ®°¡ ¼º°øÀûÀ¸·Î ºÎ¸ğ·ÎºÎÅÍ ÂüÁ¶µÇ¾ú½À´Ï´Ù: " + fireObject.name);
-            fireObject.SetActive(false); // ½ÃÀÛ ½Ã ºñÈ°¼ºÈ­ »óÅÂ·Î ¼³Á¤
+            Debug.Log("'Fireextinguisher(fire)' ì˜¤ë¸Œì íŠ¸ê°€ ì„±ê³µì ìœ¼ë¡œ ë¶€ëª¨ë¡œë¶€í„° ì°¸ì¡°ë˜ì—ˆìŠµë‹ˆë‹¤: " + fireObject.name);
+            fireObject.SetActive(false); // ì‹œì‘ ì‹œ ë¹„í™œì„±í™” ìƒíƒœë¡œ ì„¤ì •
         }
     }
 
-    // selectEntered ÀÌº¥Æ®°¡ ¹ß»ıÇÒ ¶§ È£ÃâµÇ´Â ÇÔ¼ö
     private void OnSelectEntered(SelectEnterEventArgs args)
     {
-        Debug.Log("OnSelectEntered È£ÃâµÊ");
-
         if (args.interactableObject.transform.CompareTag("fireextinguisher"))
         {
-            Debug.Log("¼ÒÈ­±â ¼±ÅÃµÊ: " + args.interactableObject.transform.name);
-
-            // ¼ÒÈ­±â ºñÈ°¼ºÈ­
-            DeactivateFireExtinguisher(args.interactableObject.transform.gameObject);
-
-            // "Fireextinguisher(fire)" ¿ÀºêÁ§Æ® È°¼ºÈ­
-            ActivateFireObject();
-
-            // ¼Õ ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
-            PlayHandAnimations();
-
-            // ¿À¸¥¼ÕÀ» ¿Ş¼ÕÀÇ ÀÚ½ÄÀ¸·Î ¼³Á¤ÇÏ°í ¿òÁ÷ÀÓ Àá±İ
-            SetRightHandAsChildOfLeftHand();
-
-            // ¿À¸¥¼Õ ¿òÁ÷ÀÓ Àá±İ È°¼ºÈ­
-            LockRightHandMovement();
+            DeactivateFireExtinguisher(args.interactableObject.transform.gameObject); // ì†Œí™”ê¸° ë¹„í™œì„±í™”         
+            ActivateFireObject(); // "Fireextinguisher(fire)" ì˜¤ë¸Œì íŠ¸ í™œì„±í™”       
+            PlayHandAnimations(); // ì† ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰       
+            SetRightHandAsChildOfLeftHand(); // ì˜¤ë¥¸ì†ì„ ì™¼ì†ì˜ ìì‹ìœ¼ë¡œ ì„¤ì •í•˜ê³  ì›€ì§ì„ ì ê¸ˆ    
+            LockRightHandMovement(); // ì˜¤ë¥¸ì† ì›€ì§ì„ ì ê¸ˆ í™œì„±í™”
         }
     }
 
-    // ºÎ¸ğ ¿ÀºêÁ§Æ®¿¡¼­ ºñÈ°¼ºÈ­µÈ ÀÚ½Ä ¿ÀºêÁ§Æ® Ã£±â (ÀÌ¸§À¸·Î Ã£À½)
+    // ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ì—ì„œ ë¹„í™œì„±í™”ëœ ìì‹ ì˜¤ë¸Œì íŠ¸ ì°¾ê¸° (ì´ë¦„ìœ¼ë¡œ ì°¾ìŒ)
     private GameObject FindInactiveChildByName(Transform parent, string childName)
     {
         if (parent != null)
@@ -77,106 +63,106 @@ public class FireExtinguisherInteraction_fac : MonoBehaviour
             {
                 if (child.name == childName && !child.gameObject.activeSelf)
                 {
-                    return child.gameObject;  // ºñÈ°¼ºÈ­µÈ ÀÚ½ÄÀ» ¹İÈ¯
+                    return child.gameObject;  // ë¹„í™œì„±í™”ëœ ìì‹ì„ ë°˜í™˜
                 }
             }
         }
         return null;
     }
 
-    // ¼ÒÈ­±â ¿ÀºêÁ§Æ®¸¦ ºñÈ°¼ºÈ­ÇÏ´Â ÇÔ¼ö
+    // ì†Œí™”ê¸° ì˜¤ë¸Œì íŠ¸ë¥¼ ë¹„í™œì„±í™”í•˜ëŠ” í•¨ìˆ˜
     private void DeactivateFireExtinguisher(GameObject extinguisher)
     {
         if (extinguisher != null && extinguisher.activeSelf)
         {
             extinguisher.SetActive(false);
-            Debug.Log("¼ÒÈ­±â ºñÈ°¼ºÈ­µÊ: " + extinguisher.name);
+            Debug.Log("ì†Œí™”ê¸° ë¹„í™œì„±í™”ë¨: " + extinguisher.name);
         }
     }
 
-    // "Fireextinguisher(fire)" ¿ÀºêÁ§Æ®¸¦ È°¼ºÈ­ÇÏ´Â ÇÔ¼ö
+    // "Fireextinguisher(fire)" ì˜¤ë¸Œì íŠ¸ë¥¼ í™œì„±í™”í•˜ëŠ” í•¨ìˆ˜
     private void ActivateFireObject()
     {
         if (fireObject != null && !fireObject.activeSelf)
         {
             fireObject.SetActive(true);
-            Debug.Log("'Fireextinguisher(fire)' ¿ÀºêÁ§Æ® È°¼ºÈ­µÊ: " + fireObject.name);
+            Debug.Log("'Fireextinguisher(fire)' ì˜¤ë¸Œì íŠ¸ í™œì„±í™”ë¨: " + fireObject.name);
         }
         else
         {
-            Debug.LogWarning("'Fireextinguisher(fire)' ¿ÀºêÁ§Æ®°¡ nullÀÌ°Å³ª ÀÌ¹Ì È°¼ºÈ­µÈ »óÅÂÀÔ´Ï´Ù.");
+            Debug.LogWarning("'Fireextinguisher(fire)' ì˜¤ë¸Œì íŠ¸ê°€ nullì´ê±°ë‚˜ ì´ë¯¸ í™œì„±í™”ëœ ìƒíƒœì…ë‹ˆë‹¤.");
         }
     }
 
     private void PlayHandAnimations()
     {
-        // ¿Ş¼Õ ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+        // ì™¼ì† ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
         if (leftHandAnimator != null)
         {
             leftHandAnimator.SetTrigger("GrabFireExtinguisherLeft");
         }
 
-        // ¿À¸¥¼Õ ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+        // ì˜¤ë¥¸ì† ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
         if (rightHandAnimator != null)
         {
             rightHandAnimator.SetTrigger("GrabFireExtinguisherRight");
         }
     }
 
-    // ¿À¸¥¼ÕÀ» ¿Ş¼ÕÀÇ ÀÚ½ÄÀ¸·Î ¼³Á¤ÇÏ°í ¿òÁ÷ÀÓÀ» Àá±×´Â ÇÔ¼ö
+    // ì˜¤ë¥¸ì†ì„ ì™¼ì†ì˜ ìì‹ìœ¼ë¡œ ì„¤ì •í•˜ê³  ì›€ì§ì„ì„ ì ê·¸ëŠ” í•¨ìˆ˜
     private void SetRightHandAsChildOfLeftHand()
     {
         if (leftHandTransform != null && rightHandTransform != null)
         {
-            // ¿À¸¥¼ÕÀ» ¿Ş¼ÕÀÇ ÀÚ½ÄÀ¸·Î ¼³Á¤
+            // ì˜¤ë¥¸ì†ì„ ì™¼ì†ì˜ ìì‹ìœ¼ë¡œ ì„¤ì •
             rightHandTransform.SetParent(leftHandTransform);
-            Debug.Log("¿À¸¥¼ÕÀÌ ¿Ş¼ÕÀÇ ÀÚ½ÄÀ¸·Î ¼³Á¤µÇ¾ú½À´Ï´Ù.");
+            Debug.Log("ì˜¤ë¥¸ì†ì´ ì™¼ì†ì˜ ìì‹ìœ¼ë¡œ ì„¤ì •ë˜ì—ˆìŠµë‹ˆë‹¤.");
         }
         else
         {
-            Debug.LogWarning("¿Ş¼Õ ¶Ç´Â ¿À¸¥¼Õ TransformÀÌ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("ì™¼ì† ë˜ëŠ” ì˜¤ë¥¸ì† Transformì´ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         }
     }
 
 
-    // ¿À¸¥¼ÕÀÇ ¿òÁ÷ÀÓÀ» Àá±×´Â ÇÔ¼ö
+    // ì˜¤ë¥¸ì†ì˜ ì›€ì§ì„ì„ ì ê·¸ëŠ” í•¨ìˆ˜
     private void LockRightHandMovement()
     {
         if (rightHandTransform != null)
         {
 
-            // ¿À¸¥¼ÕÀÇ À§Ä¡¿Í È¸ÀüÀ» ¿øÇÏ´Â °ªÀ¸·Î ¼³Á¤
+            // ì˜¤ë¥¸ì†ì˜ ìœ„ì¹˜ì™€ íšŒì „ì„ ì›í•˜ëŠ” ê°’ìœ¼ë¡œ ì„¤ì •
             rightHandTransform.localPosition = new Vector3(0.200000003f, -0.0700000003f, -0.0299999993f);
             rightHandTransform.localRotation = Quaternion.Euler(346.300018f, 358.279999f, 334.600006f);
 
-            // ¿À¸¥¼Õ ¸ğµ¨ ¿ÀºêÁ§Æ® ºñÈ°¼ºÈ­
+            // ì˜¤ë¥¸ì† ëª¨ë¸ ì˜¤ë¸Œì íŠ¸ ë¹„í™œì„±í™”
             GameObject parentObject = GameObject.Find("RightHand");
             if (parentObject != null)
             {
-                // ºÎ¸ğ ¿ÀºêÁ§Æ®ÀÇ ÀÚ½Ä Áß ÀÌ¸§À» °¡Áø ¿ÀºêÁ§Æ® Ã£±â
+                // ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ì˜ ìì‹ ì¤‘ ì´ë¦„ì„ ê°€ì§„ ì˜¤ë¸Œì íŠ¸ ì°¾ê¸°
                 Transform hand = parentObject.transform.Find("Right Hand Model");
                 if (hand != null)
                 {
-                    hand.gameObject.SetActive(false); // ÀÚ½Ä ¿ÀºêÁ§Æ® ºñÈ°¼ºÈ­
+                    hand.gameObject.SetActive(false); // ìì‹ ì˜¤ë¸Œì íŠ¸ ë¹„í™œì„±í™”
                 }
             }
 
-            // ¿À¸¥¼Õ ¿òÁ÷ÀÓ Àá±İ ÇÃ·¡±× ¼³Á¤
+            // ì˜¤ë¥¸ì† ì›€ì§ì„ ì ê¸ˆ í”Œë˜ê·¸ ì„¤ì •
             isRightHandLocked = true;
 
         }
         else
         {
-            Debug.LogWarning("¿À¸¥¼Õ TransformÀÌ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("ì˜¤ë¥¸ì† Transformì´ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         }
     }
 
-    // Update ÇÔ¼ö¿¡¼­ ¿À¸¥¼ÕÀÇ À§Ä¡¸¦ °íÁ¤
+    // Update í•¨ìˆ˜ì—ì„œ ì˜¤ë¥¸ì†ì˜ ìœ„ì¹˜ë¥¼ ê³ ì •
     private void Update()
     {
         if (isRightHandLocked && rightHandTransform != null)
         {
-            // ¿À¸¥¼ÕÀÇ ·ÎÄÃ À§Ä¡¿Í È¸ÀüÀ» °íÁ¤
+            // ì˜¤ë¥¸ì†ì˜ ë¡œì»¬ ìœ„ì¹˜ì™€ íšŒì „ì„ ê³ ì •
             rightHandTransform.localPosition = new Vector3(0.200000003f, -0.0700000003f, -0.0299999993f);
             rightHandTransform.localRotation = Quaternion.Euler(346.300018f, 358.279999f, 334.600006f);
         }
@@ -189,4 +175,5 @@ public class FireExtinguisherInteraction_fac : MonoBehaviour
             rayInteractor.selectEntered.RemoveListener(OnSelectEntered);
         }
     }
+
 }
