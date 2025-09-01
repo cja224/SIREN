@@ -42,22 +42,17 @@ public class FireExtinguisherInteraction : MonoBehaviour
 
     }
 
-    //selectEntered
     private void OnSelectEntered(SelectEnterEventArgs args)
     {
         if (firespreadObject != null && firespreadObject.activeSelf) // "fire" 오브젝트가 활성화 상태일 때만 실행
         {
-            Debug.Log("OnSelectEntered 호출됨");
-
             if (args.interactableObject.transform.CompareTag("fireextinguisher"))
             {
-                Debug.Log("소화기 선택됨: " + args.interactableObject.transform.name);
-
-                DeactivateFireExtinguisher(args.interactableObject.transform.gameObject);
-                ActivateFireObject();
-                PlayHandAnimations();
-                SetRightHandAsChildOfLeftHand();
-                LockRightHandMovement();
+                DeactivateFireExtinguisher(args.interactableObject.transform.gameObject); // 소화기 비활성화         
+		        ActivateFireObject(); // "Fireextinguisher(fire)" 오브젝트 활성화       
+		        PlayHandAnimations(); // 손 애니메이션 실행       
+		        SetRightHandAsChildOfLeftHand(); // 오른손을 왼손의 자식으로 설정하고 움직임 잠금    
+		        LockRightHandMovement(); // 오른손 움직임 잠금 활성화
             }
         }
     }
@@ -77,6 +72,7 @@ public class FireExtinguisherInteraction : MonoBehaviour
         return null;
     }
 
+    // 소화기 오브젝트를 비활성화하는 함수
     private void DeactivateFireExtinguisher(GameObject extinguisher)
     {
         if (extinguisher != null && extinguisher.activeSelf)
@@ -85,31 +81,30 @@ public class FireExtinguisherInteraction : MonoBehaviour
         }
     }
 
-    // "Fireextinguisher(fire)"
+    // "Fireextinguisher(fire)" 오브젝트를 활성화하는 함수
     private void ActivateFireObject()
     {
         if (fireObject != null && !fireObject.activeSelf)
         {
             fireObject.SetActive(true);
         }
-        else
-        {
-            Debug.LogWarning("'Fireextinguisher(fire)' null");
-        }
     }
 
     private void PlayHandAnimations()
     {
+        // 왼손 애니메이션 실행
         if (leftHandAnimator != null)
         {
             leftHandAnimator.SetTrigger("GrabFireExtinguisherLeft");
         }
 
+        // 오른손 애니메이션 실행
         if (rightHandAnimator != null)
         {
             rightHandAnimator.SetTrigger("GrabFireExtinguisherRight");
         }
     }
+
 
     private void SetRightHandAsChildOfLeftHand()
     {
@@ -166,4 +161,5 @@ public class FireExtinguisherInteraction : MonoBehaviour
         }
     }
 }
+
 
