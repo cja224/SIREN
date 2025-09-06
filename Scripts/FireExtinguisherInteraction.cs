@@ -115,7 +115,7 @@ public class FireExtinguisherInteraction : MonoBehaviour
         }
     }
 
-    // 오른손의 움직임 잠금금
+    // 오른손의 움직임 잠금
     private void LockRightHandMovement()
     {
         if (rightHandTransform != null)
@@ -166,6 +166,7 @@ public class FireExtinguisherInteraction : MonoBehaviour
         }
     }
 }
+
 
 
 
